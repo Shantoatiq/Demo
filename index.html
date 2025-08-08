@@ -1,0 +1,119 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Restaurant -- Home</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Bootstrap 5 (for buttons / utilities if needed) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    /* small custom styles */
+    .logo-wrap { perspective: 1000px; }
+    .logo {
+      transform-style: preserve-3d;
+      transition: transform .9s cubic-bezier(.2,.9,.3,1);
+    }
+    .logo:hover { transform: rotateY(20deg) rotateX(-6deg) scale(1.03); }
+    @keyframes floaty {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0px); }
+    }
+    .floaty { animation: floaty 3s ease-in-out infinite; }
+
+    /* button hover fancy */
+    .order-btn {
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .order-btn:hover { transform: translateY(-6px); box-shadow: 0 14px 30px rgba(0,0,0,0.18); }
+
+    /* page enter animation */
+    .enter-anim { animation: pageEnter .6s ease both; }
+    @keyframes pageEnter {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-white via-slate-50 to-slate-100 min-h-screen flex items-center justify-center">
+
+  <main class="max-w-3xl w-full p-6 enter-anim">
+    <div class="bg-white shadow-lg rounded-2xl p-6 md:p-10">
+      <div class="flex items-center gap-4">
+        <div class="logo-wrap">
+          <!-- Replace with your logo img if you want -->
+          <div class="logo w-20 h-20 rounded-xl bg-gradient-to-tr from-rose-600 to-amber-400 flex items-center justify-center text-white text-2xl font-bold floaty">
+            🔥
+          </div>
+        </div>
+        <div>
+          <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-800">রেস্টুরেন্টের নাম</h1>
+          <p class="mt-1 text-slate-500">ফুড অর্ডার দ্রুত ও স্টাইলিশভাবে -- Waiter web App</p>
+        </div>
+      </div>
+
+      <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <p class="text-slate-600">নোট: অর্ডার নেওয়ার জন্য Order Confirm বাটনটি চাপুন।</p>
+<a href="order.html" class="btn btn-lg btn-outline-primary px-5 py-3 rounded-pill mt-4">
+  Order Confirm
+</a>
+        </div>
+
+        <div class="text-sm text-slate-600">
+          <p><strong>Quick tips:</strong></p>
+          <ul class="list-disc ml-5 mt-2">
+            <li>অর্ডার সাবমিট হলে chef-এর  WhatsApp-এ মেসেজ যাবে।</li>
+          </ul>
+        </div>
+      </div>
+
+      <div id="ordersNav" class="mt-6 border-t pt-4 hidden">
+        <h3 class="text-slate-700 mb-2">সর্বশেষ অর্ডার (1-10)</h3>
+        <div id="recentList" class="flex gap-2 flex-wrap"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Open order page with nice animation (simple)
+    document.getElementById('openOrder').addEventListener('click', function(){
+      // small scale animation
+      this.classList.add('disabled');
+      this.innerText = 'Opening…';
+      setTimeout(() => {
+        window.location.href = 'order.html';
+      }, 280); // brief delay for effect
+    });
+
+    // show last 10 orders in nav (from localStorage)
+    function renderRecent() {
+      const recent = JSON.parse(localStorage.getItem('lastOrders') || '[]');
+      const nav = document.getElementById('ordersNav');
+      const list = document.getElementById('recentList');
+      list.innerHTML = '';
+      if(!recent || recent.length === 0) { nav.classList.add('hidden'); return; }
+      nav.classList.remove('hidden');
+      // show most recent first with index number 1..n
+      for (let i = 0; i < recent.length; i++) {
+        const idx = i+1;
+        const item = recent[i];
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-sm btn-outline-secondary rounded-pill px-3';
+        btn.innerText = idx + '. ' + (item.short ?? ('Order ' + idx));
+        btn.onclick = () => {
+          // show details in alert modal simple
+          alert('Order details:\\n' + (item.details || JSON.stringify(item)));
+        };
+        list.appendChild(btn);
+      }
+    }
+    renderRecent();
+    
+  </script>
+</body>
+</html>
